@@ -25,6 +25,11 @@
       <section id="step-1" class="step-card">
         <h2>1) Preflight</h2>
         <p>Verifica prerequisitos. Brainer App no instala Docker automáticamente; solo valida y te guía.</p>
+        <div class="row">
+          <input id="brainer-root" placeholder="Brainer repo path (auto-detected)" readonly />
+          <button id="pick-brainer-root" class="btn">Choose Brainer Folder</button>
+        </div>
+        <p class="hint">Si la autodetección falla, selecciona manualmente la carpeta del repo <code>brainer</code>.</p>
         <button id="run-preflight" class="btn primary">Run Preflight</button>
         <div id="preflight-results" class="kv-grid"></div>
       </section>

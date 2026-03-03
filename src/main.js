@@ -44,15 +44,19 @@ function showStep(step) {
 
 function requireStepCompletion(step) {
   if (step === 1 && !state.preflight) {
-    appendLog('Run Preflight first.');
+    appendLog("Run Preflight first.");
+    return false;
+  }
+  if (step === 1 && !state.brainerRoot) {
+    appendLog("Brainer root not detected. Use Choose Brainer Folder.");
     return false;
   }
   if (step === 2 && !state.workspaceRoot) {
-    appendLog('Select workspace root before continuing.');
+    appendLog("Select workspace root before continuing.");
     return false;
   }
   if (step === 4 && !state.selectedModel) {
-    appendLog('Select an Ollama model before continuing.');
+    appendLog("Select an Ollama model before continuing.");
     return false;
   }
   return true;
@@ -221,10 +225,33 @@ async function refreshModels() {
 
 async function detectBrainerRoot() {
   try {
-    state.brainerRoot = await invoke('detect_brainer_root');
-    appendLog(`Detected Brainer root: ${state.brainerRoot}`);
+    state.brainerRoot = await invoke("detect_brainer_root");
+    const input = el("brainer-root");
+    if (input) input.value = state.brainerRoot;
+    appendLog("Detected Brainer root: " + state.brainerRoot);
   } catch (error) {
-    appendLog(`Could not auto-detect Brainer root: ${error}`);
+    appendLog("Could not auto-detect Brainer root: " + error);
+  }
+  refreshSummary();
+}
+
+async function pickBrainerRoot() {
+  try {
+    const selected = await open({
+      directory: true,
+      multiple: false,
+      title: "Select Brainer backend repository folder",
+    });
+    if (!selected || Array.isArray(selected)) {
+      return;
+    }
+    state.brainerRoot = selected;
+    const input = el("brainer-root");
+    if (input) input.value = selected;
+    appendLog("Brainer root selected manually: " + selected);
+    refreshSummary();
+  } catch (error) {
+    appendLog("Brainer folder selection failed: " + error);
   }
 }
 
@@ -317,6 +344,7 @@ async function runMcpInstalls() {
 
 function wireEvents() {
   el('run-preflight').addEventListener('click', runPreflight);
+  el('pick-brainer-root').addEventListener('click', pickBrainerRoot);
   el('pick-workspace-root').addEventListener('click', pickWorkspaceRoot);
   el('refresh-models').addEventListener('click', refreshModels);
   el('selected-model').addEventListener('change', (event) => {

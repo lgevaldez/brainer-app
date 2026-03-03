@@ -102,29 +102,80 @@ fn run_command(program: &str, args: &[&str], cwd: Option<&Path>) -> Result<Comma
     })
 }
 
+fn is_brainer_root(path: &Path) -> bool {
+    path.join("docker-compose.yml").is_file() && path.join("backend").is_dir()
+}
+
+fn normalize_existing_dir(path: PathBuf) -> Option<PathBuf> {
+    if !path.exists() || !path.is_dir() {
+        return None;
+    }
+    path.canonicalize().ok()
+}
+
 fn find_brainer_root() -> Option<PathBuf> {
     if let Ok(raw) = env::var("BRAINER_ROOT") {
-        let path = PathBuf::from(raw);
-        if path.join("docker-compose.yml").exists() && path.join("backend").is_dir() {
-            return Some(path);
+        if let Some(path) = normalize_existing_dir(PathBuf::from(raw)) {
+            if is_brainer_root(&path) {
+                return Some(path);
+            }
         }
     }
 
     let mut candidates = vec![];
     if let Ok(cwd) = env::current_dir() {
-        candidates.push(cwd);
+        if let Some(path) = normalize_existing_dir(cwd) {
+            candidates.push(path);
+        }
     }
     if let Ok(exe) = env::current_exe() {
         if let Some(parent) = exe.parent() {
-            candidates.push(parent.to_path_buf());
+            if let Some(path) = normalize_existing_dir(parent.to_path_buf()) {
+                candidates.push(path);
+            }
         }
     }
 
+    let sibling_names = ["brainer", "Brainer", "brainer-backend"];
+    let mut visited = HashSet::new();
+
     for base in candidates {
+        let base_key = base.to_string_lossy().to_string();
+        if !visited.insert(base_key) {
+            continue;
+        }
+
+        if is_brainer_root(&base) {
+            return Some(base);
+        }
+
         for ancestor in base.ancestors() {
             let candidate = ancestor.to_path_buf();
-            if candidate.join("docker-compose.yml").exists() && candidate.join("backend").is_dir() {
+            if is_brainer_root(&candidate) {
                 return Some(candidate);
+            }
+
+            for sibling in sibling_names {
+                let sibling_candidate = candidate.join(sibling);
+                if let Some(normalized) = normalize_existing_dir(sibling_candidate) {
+                    if is_brainer_root(&normalized) {
+                        return Some(normalized);
+                    }
+                }
+            }
+
+            if let Ok(entries) = fs::read_dir(&candidate) {
+                for entry in entries.flatten().take(30) {
+                    let name = entry.file_name().to_string_lossy().to_lowercase();
+                    if !name.contains("brainer") {
+                        continue;
+                    }
+                    if let Some(normalized) = normalize_existing_dir(entry.path()) {
+                        if is_brainer_root(&normalized) {
+                            return Some(normalized);
+                        }
+                    }
+                }
             }
         }
     }
