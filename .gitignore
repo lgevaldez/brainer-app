@@ -1,0 +1,11 @@
+# Node
+node_modules/
+
+# Frontend build
+dist/
+
+# Tauri / Rust
+src-tauri/target/
+
+# macOS
+.DS_Store

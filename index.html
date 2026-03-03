@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Brainer App</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <div>
+          <h1>Brainer Desktop Setup</h1>
+          <p>Wizard para configurar Brainer, Docker, MCP y modelos locales.</p>
+        </div>
+        <div id="step-indicator" class="pill"></div>
+      </header>
+
+      <section class="progress-wrap">
+        <div class="progress-track">
+          <div id="progress-fill" class="progress-fill"></div>
+        </div>
+      </section>
+
+      <section id="step-1" class="step-card">
+        <h2>1) Preflight</h2>
+        <p>Verifica prerequisitos. Brainer App no instala Docker automáticamente; solo valida y te guía.</p>
+        <button id="run-preflight" class="btn primary">Run Preflight</button>
+        <div id="preflight-results" class="kv-grid"></div>
+      </section>
+
+      <section id="step-2" class="step-card hidden">
+        <h2>2) Workspace Maestro</h2>
+        <p>Selecciona la carpeta raíz (ejemplo: <code>/Users/&lt;you&gt;/Sites</code>). Se montará como <code>/workspaces</code>.</p>
+        <div class="row">
+          <input id="workspace-root" placeholder="/Users/you/Sites" readonly />
+          <button id="pick-workspace-root" class="btn">Choose Folder</button>
+        </div>
+        <p class="hint">Subcarpetas detectadas (workspaces disponibles):</p>
+        <div id="workspace-list" class="list-box"></div>
+        <label class="hint" for="default-workspace">Workspace por defecto (opcional)</label>
+        <select id="default-workspace">
+          <option value="">-- ninguno --</option>
+        </select>
+      </section>
+
+      <section id="step-3" class="step-card hidden">
+        <h2>3) GitHub Webhooks</h2>
+        <p>
+          <strong>GitHub Token</strong>: permite a Brainer publicar comentarios/revisiones en PR.<br />
+          <strong>Webhook Secret</strong>: valida firma HMAC y evita eventos falsificados.<br />
+          <strong>Webhook URL</strong>: URL que registrarás en GitHub (referencia para ti).
+        </p>
+        <div class="stack">
+          <input id="github-token" type="password" placeholder="GITHUB_TOKEN (opcional)" />
+          <input id="github-secret" type="password" placeholder="GITHUB_WEBHOOK_SECRET (recomendado)" />
+          <input id="github-url" placeholder="https://your-host/api/webhooks/github" />
+          <label class="checkbox"><input id="allow-insecure-webhooks" type="checkbox" /> Permitir webhooks inseguros (solo pruebas locales)</label>
+        </div>
+      </section>
+
+      <section id="step-4" class="step-card hidden">
+        <h2>4) Modelo Local (Ollama)</h2>
+        <p>Se detectan modelos instalados. Si no tienes uno, puedes instalar uno recomendado.</p>
+        <div class="row">
+          <button id="refresh-models" class="btn">Refresh Installed Models</button>
+        </div>
+        <div id="models-installed" class="list-box"></div>
+        <label class="hint" for="selected-model">Modelo seleccionado para Brainer</label>
+        <select id="selected-model">
+          <option value="">-- seleccionar --</option>
+        </select>
+        <h3>Recomendados</h3>
+        <div id="models-suggested" class="list-box"></div>
+      </section>
+
+      <section id="step-5" class="step-card hidden">
+        <h2>5) MCP Agents</h2>
+        <p>Selecciona en qué clientes deseas instalar Brainer MCP.</p>
+        <div class="check-grid">
+          <label class="checkbox"><input type="checkbox" value="codex" checked /> Codex</label>
+          <label class="checkbox"><input type="checkbox" value="cursor" /> Cursor</label>
+          <label class="checkbox"><input type="checkbox" value="claude" /> Claude Desktop</label>
+          <label class="checkbox"><input type="checkbox" value="antigravity" /> Antigravity</label>
+        </div>
+        <p class="hint">La instalación MCP se ejecuta después de levantar el stack.</p>
+      </section>
+
+      <section id="step-6" class="step-card hidden">
+        <h2>6) Review & Launch</h2>
+        <pre id="review-summary" class="summary"></pre>
+        <div class="row">
+          <button id="apply-setup" class="btn primary">Build + Up Brainer</button>
+          <button id="run-mcp-installs" class="btn">Install Selected MCP Integrations</button>
+        </div>
+        <p class="hint">Este paso ejecuta <code>docker compose build backend</code> y <code>docker compose up -d</code>.</p>
+      </section>
+
+      <footer class="wizard-nav">
+        <button id="prev-step" class="btn">Back</button>
+        <button id="next-step" class="btn primary">Next</button>
+      </footer>
+
+      <section class="logs-panel">
+        <div class="logs-title">Execution Log</div>
+        <pre id="execution-log"></pre>
+      </section>
+    </main>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
