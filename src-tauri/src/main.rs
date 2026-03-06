@@ -462,7 +462,9 @@ fn render_master_root_agents_template(root_name: &str, workspace_names: &[String
 Scope: master stack folder `{root_name}`.
 
 ## Brainer Concept
-This root folder groups related repositories/workspaces. Brainer is the mandatory cognitive entrypoint for context retrieval, graph reasoning, and persistent memory before direct local exploration.
+This root folder groups related repositories and workspaces.
+Brainer is the mandatory cognitive entrypoint before direct local exploration.
+MCP and API are the nervous system used to exchange context with the brain.
 
 {entrypoint_block}
 
@@ -470,6 +472,12 @@ This root folder groups related repositories/workspaces. Brainer is the mandator
 - This root folder is a stack container, not necessarily a directly addressable Brainer workspace.
 - Identify the target workspace or project from the list below.
 - Use the most specific `AGENTS.md` file for the active scope after the Brainer bootstrap.
+
+## Mental Process Contract
+- Agents should treat every MCP/API interaction as a cognitive exchange with Brainer, not a stateless utility call.
+- Send high-signal memory only: decisions, blockers, risks, TODOs, discovered relationships, and verification targets.
+- Scope memory as narrowly as possible and recover memory before broad local exploration.
+- Favor reusable context that will still matter after compaction or handoff.
 
 ## Detected Workspaces
 {workspace_block}
@@ -483,8 +491,8 @@ This root folder groups related repositories/workspaces. Brainer is the mandator
 6. `recall_memory_bundle`
 7. `search_workspace_context`
 8. `get_graph_dependencies` when structural impact matters
-9. `remember_short_term_memory` for decisions, blockers, and TODOs
-10. `checkpoint_memory` at milestones or before compact
+9. `remember_short_term_memory` for decisions, blockers, TODOs, and high-value relationships
+10. `checkpoint_memory` at milestones, before compact, or before handoff
 11. `promote_short_term_memory` for high-signal long-term knowledge
 12. Only then inspect code or modify files locally
 
@@ -494,6 +502,7 @@ This root folder groups related repositories/workspaces. Brainer is the mandator
 - For cross-workspace tasks, start project-first and expand to related workspaces only when needed.
 - Source code is final ground truth after MCP-guided retrieval.
 - If this stack contains child repositories with their own `AGENTS.md`, follow the most specific file for the active scope.
+- Treat memory writes as candidate inputs for future background mental processes.
 
 ## Fallback
 Use direct local inspection only when Brainer MCP is unavailable, times out, or returns low-confidence context.
