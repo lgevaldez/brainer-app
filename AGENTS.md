@@ -4,7 +4,7 @@ Scope: repository root for workspace `brainer-app`.
 
 ## Brainer Concept
 Brainer is the local cognitive brain for software workspaces.
-Its job is to perceive project state, form useful connections, preserve continuity, and return actionable context to agents.
+Its core job is to perceive repository state, form useful connections, preserve continuity, and return actionable context to agents.
 MCP and HTTP API are the nervous system and senses used to exchange context with the brain.
 
 ## Defaults
