@@ -1,6 +1,8 @@
 import { invoke } from '@tauri-apps/api/core';
 import { listen } from '@tauri-apps/api/event';
 import { confirm as confirmDialog, open } from '@tauri-apps/plugin-dialog';
+import { buildCognitiveSummary, formatCognitiveSummary } from './lib/cognitive.js';
+import { formatWorkspaceKind, resolveTargetWorkspacesForAgents as resolveAgentWorkspaces } from './lib/workspaces.js';
 
 const totalSteps = 6;
 let currentStep = 1;
@@ -41,6 +43,8 @@ const state = {
   agentsIndexStage: 'idle',
   agentsIndexMessage: 'No index run yet.',
   lastAgentsIndexSignature: '',
+  cognitiveTelemetry: null,
+  cognitiveBackground: null,
 };
 
 const el = (id) => document.getElementById(id);
@@ -290,19 +294,13 @@ function renderWorkspaceChildren() {
   state.workspaceChildren.forEach((entry) => {
     const row = document.createElement('div');
     row.className = 'item';
-    row.innerHTML = `<span><strong>${entry.name}</strong><br /><small>${entry.path}</small></span>`;
+    row.innerHTML = `<span><strong>${entry.name}</strong><br /><small>${entry.path}</small><br /><small>kind: ${formatWorkspaceKind(entry)}</small></span>`;
     list.appendChild(row);
   });
 }
 
 function resolveTargetWorkspacesForAgents() {
-  return Array.from(
-    new Set(
-      (state.workspaceChildren || [])
-        .map((entry) => String(entry?.name || '').trim())
-        .filter((name) => name.length > 0),
-    ),
-  );
+  return resolveAgentWorkspaces(state.workspaceChildren || []);
 }
 
 function resolveSuggestionWorkspace() {
@@ -474,6 +472,21 @@ async function pickWorkspaceRoot() {
   }
 }
 
+async function refreshCognitiveStatus() {
+  const box = el('cognitive-summary');
+  if (!box) return;
+
+  try {
+    const payload = await invoke('get_cognitive_status');
+    state.cognitiveTelemetry = payload?.telemetry || null;
+    state.cognitiveBackground = payload?.background || null;
+    const summary = buildCognitiveSummary(state.cognitiveTelemetry, state.cognitiveBackground);
+    box.textContent = formatCognitiveSummary(summary);
+  } catch (error) {
+    box.textContent = 'Unable to fetch cognitive telemetry: ' + error;
+  }
+}
+
 async function applySetup() {
   if (state.setupInProgress) {
     appendLog('Setup already running...');
@@ -516,6 +529,7 @@ async function applySetup() {
     setBuildProgress(100, 'done', 'brainer is up.');
     appendLog('brainer is up.');
     await refreshAgentsSuggestion();
+    await refreshCognitiveStatus();
   } catch (error) {
     setBuildProgress(Math.max(state.buildProgress, 5), 'failed', String(error), true);
     appendLog(`Setup failed: ${error}`);
@@ -696,7 +710,7 @@ async function refreshAgentsSuggestion() {
 async function generateAgentsTemplates() {
   const workspaces = resolveTargetWorkspacesForAgents();
   if (!workspaces.length) {
-    const message = 'Select workspace root first (Step 2) so Brainer can detect workspaces before generating AGENTS templates.';
+    const message = 'Select a workspace root with valid project-like folders first (Step 2) before generating AGENTS templates.';
     state.agentsOutput = 'Error: ' + message;
     renderAgentsOutput();
     appendLog(message);
@@ -763,6 +777,7 @@ async function generateAgentsTemplates() {
             force,
           });
           if (result && result.message) appendLog(String(result.message));
+          await refreshCognitiveStatus();
         } catch (error) {
           state.agentsIndexInProgress = false;
           setAgentsIndexProgress(Math.max(state.agentsIndexProgress, 5), 'failed', String(error), true);
@@ -818,6 +833,7 @@ async function generateAgentsTemplates() {
     state.agentsOutput = report.join('\n\n');
     renderAgentsOutput();
     appendLog('AGENTS templates generated for ' + workspaces.length + ' workspace(s).');
+    await refreshCognitiveStatus();
 
     if (workspaces.length === 1) {
       await refreshAgentsSuggestion();
@@ -888,6 +904,9 @@ function wireEvents() {
   const generateAgentsBtn = el('generate-agents-templates');
   if (generateAgentsBtn) generateAgentsBtn.addEventListener('click', generateAgentsTemplates);
 
+  const refreshCognitiveBtn = el('refresh-cognitive-status');
+  if (refreshCognitiveBtn) refreshCognitiveBtn.addEventListener('click', refreshCognitiveStatus);
+
   const includeMirrors = el('agents-include-project-mirrors');
   if (includeMirrors) {
     includeMirrors.addEventListener('change', (event) => {
@@ -929,6 +948,7 @@ async function bootstrap() {
   renderAgentsOutput();
   updateAgentsIndexModeNote();
   refreshSummary();
+  await refreshCognitiveStatus();
   appendLog('Wizard ready.');
 }
 
