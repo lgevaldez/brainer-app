@@ -1,12 +1,14 @@
-# Brainer App (Tauri Desktop)
+# Brainer Operator (`brainer-app`)
 
-`brainer-app` es el cliente desktop para configurar y operar Brainer de forma guiada.
+`brainer-app` es el cliente desktop oficial para instalar, configurar y operar
+`brainer`.
 
 ## Objetivo
 
-1. Reemplazar la configuración manual de variables por un wizard.
-2. Mantener Docker/Docker Compose como prerequisito (no instalación automática).
-3. Configurar workspace maestro, webhooks GitHub, modelo Ollama y MCP para agentes.
+1. Operar `brainer` sin depender de configuración manual dispersa.
+2. Mantener Docker y Docker Compose como prerequisito, sin instalación automática.
+3. Centralizar setup de workspace maestro, webhooks GitHub, Ollama y MCP.
+4. Generar bootstrap operativo (`.env`, `AGENTS.md`, indexación y estado inicial).
 
 ## Requisitos
 
@@ -17,11 +19,11 @@
 ## Wizard (flujo)
 
 1. **Preflight**: valida Docker, Compose y Ollama.
-2. **Workspace maestro**: selector nativo de carpeta y detección de subcarpetas.
+2. **Workspace maestro**: selector nativo de carpeta y detección de workspaces/repos.
 3. **GitHub**: pide token, webhook secret y webhook URL con explicaciones de seguridad.
-4. **Ollama**: detecta modelos instalados; sugiere 3 modelos compatibles y permite instalar/eliminar.
+4. **Ollama**: detecta modelos instalados; sugiere modelos compatibles y permite instalar/eliminar.
 5. **MCP agents**: selecciona clientes (Codex/Cursor/Claude/Antigravity).
-6. **Apply**: genera `.env`, ejecuta `docker compose build backend` + `docker compose up -d`, persiste settings y activa workspace por defecto.
+6. **Apply**: genera `.env`, levanta `brainer`, persiste settings y deja listo el bootstrap de `AGENTS.md`.
 
 ## Comandos de desarrollo
 
@@ -39,6 +41,7 @@ npm run tauri:build
 
 ## Notas de implementación
 
-1. El wizard escribe `.env` en la raíz de Brainer.
+1. El wizard escribe `.env` en la raíz de `brainer`.
 2. Luego persiste settings vía `PUT /api/settings` para reflejar configuración también en DB.
 3. La instalación MCP se ejecuta vía `POST /api/installers/install/{agent}`.
+4. La generación de `AGENTS.md` cubre root maestro y repos detectados para sesiones de stack completo.

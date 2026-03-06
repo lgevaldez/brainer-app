@@ -1,1 +1,1 @@
-{"default":{"identifier":"default","description":"Default capability for Brainer app","local":true,"windows":["main"],"permissions":["core:default","dialog:default"]}}
+{"default":{"identifier":"default","description":"Default capability for Brainer Operator","local":true,"windows":["main"],"permissions":["core:default","dialog:default"]}}
