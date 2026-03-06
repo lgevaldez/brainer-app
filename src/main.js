@@ -25,7 +25,7 @@ const state = {
   setupInProgress: false,
   buildProgress: 0,
   buildStage: 'idle',
-  buildMessage: 'No setup run yet.',
+  buildMessage: 'No operator setup run yet.',
   lastProgressSignature: '',
   agentsSuggestion: null,
   agentsIncludeProjectMirrors: true,
@@ -78,7 +78,7 @@ function setBuildProgress(percent, label, message, isError = false) {
   panel.classList.toggle('error', Boolean(isError));
   fill.style.width = `${clamped}%`;
   percentEl.textContent = `${clamped}%`;
-  labelEl.textContent = label || 'Running setup...';
+  labelEl.textContent = label || 'Running operator setup...';
   msgEl.textContent = message || '';
 
   refreshSummary();
@@ -103,7 +103,7 @@ function setMcpInstallProgress(percent, label, message, isError = false, details
   panel.classList.toggle('error', Boolean(isError));
   fill.style.width = clamped + '%';
   percentEl.textContent = clamped + '%';
-  labelEl.textContent = label || 'Installing MCP integrations...';
+  labelEl.textContent = label || 'Installing Brainer MCP integrations...';
   msgEl.textContent = message || '';
   detailsEl.textContent = details || '';
 
@@ -499,22 +499,22 @@ async function applySetup() {
     allowInsecureWebhooks: state.allowInsecureWebhooks,
   };
 
-  appendLog('Build + Up clicked.');
+  appendLog('Build + Up brainer clicked.');
   state.setupInProgress = true;
   state.lastProgressSignature = '';
   setSetupButtonsDisabled(true);
   setBuildProgress(1, 'prepare', 'Preparing setup execution...');
   startLocalProgressFallback();
   await new Promise((resolve) => requestAnimationFrame(resolve));
-  appendLog('Applying setup: generating .env + docker compose build/up...');
+  appendLog('Applying operator setup: generating .env + docker compose build/up...');
 
   try {
     const result = await invoke('apply_setup_with_progress', { config });
     state.setupApplied = true;
     appendLog(`Setup applied. Env file: ${result.env_file}`);
     (result.logs || []).forEach((entry) => appendLog(entry));
-    setBuildProgress(100, 'done', 'Brainer stack is up.');
-    appendLog('Brainer stack is up.');
+    setBuildProgress(100, 'done', 'brainer is up.');
+    appendLog('brainer is up.');
     await refreshAgentsSuggestion();
   } catch (error) {
     setBuildProgress(Math.max(state.buildProgress, 5), 'failed', String(error), true);
@@ -920,7 +920,7 @@ async function bootstrap() {
   await ensureAgentsIndexProgressListener();
   wireEvents();
   showStep(1);
-  setBuildProgress(0, 'ready', 'No setup run yet.');
+  setBuildProgress(0, 'ready', 'No operator setup run yet.');
   setMcpInstallProgress(0, 'ready', 'No MCP installation run yet.');
   setAgentsIndexProgress(0, 'ready', 'No index run yet.');
   await detectBrainerRoot();

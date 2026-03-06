@@ -3,15 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Brainer App</title>
+    <title>Brainer Operator</title>
     <link rel="stylesheet" href="/src/style.css" />
   </head>
   <body>
     <main class="app-shell">
       <header class="topbar">
         <div>
-          <h1>Brainer Desktop Setup</h1>
-          <p>Wizard para configurar Brainer, Docker, MCP y modelos locales.</p>
+          <h1>Brainer Operator</h1>
+          <p>Cliente desktop oficial para instalar, configurar y operar <code>brainer</code>.</p>
         </div>
         <div id="step-indicator" class="pill"></div>
       </header>
@@ -24,7 +24,7 @@
 
       <section id="step-1" class="step-card">
         <h2>1) Preflight</h2>
-        <p>Verifica prerequisitos. Brainer App no instala Docker automáticamente; solo valida y te guía.</p>
+        <p>Verifica prerequisitos. La app no instala Docker automáticamente; solo valida y te guía para operar <code>brainer</code>.</p>
         <div class="row">
           <input id="brainer-root" placeholder="Brainer repo path (auto-detected)" readonly />
           <button id="pick-brainer-root" class="btn">Choose Brainer Folder</button>
@@ -48,7 +48,7 @@
       <section id="step-3" class="step-card hidden">
         <h2>3) GitHub Webhooks</h2>
         <p>
-          <strong>GitHub Token</strong>: permite a Brainer publicar comentarios/revisiones en PR.<br />
+          <strong>GitHub Token</strong>: permite a <code>brainer</code> publicar comentarios/revisiones en PR.<br />
           <strong>Webhook Secret</strong>: valida firma HMAC y evita eventos falsificados.<br />
           <strong>Webhook URL</strong>: URL que registrarás en GitHub (referencia para ti).
         </p>
@@ -67,7 +67,7 @@
           <button id="refresh-models" class="btn">Refresh Installed Models</button>
         </div>
         <div id="models-installed" class="list-box"></div>
-        <label class="hint" for="selected-model">Modelo seleccionado para Brainer</label>
+        <label class="hint" for="selected-model">Modelo seleccionado para <code>brainer</code></label>
         <select id="selected-model">
           <option value="">-- seleccionar --</option>
         </select>
@@ -77,7 +77,7 @@
 
       <section id="step-5" class="step-card hidden">
         <h2>5) MCP Agents</h2>
-        <p>Selecciona en qué clientes deseas instalar Brainer MCP.</p>
+        <p>Selecciona en qué clientes deseas instalar la integración MCP de <code>brainer</code>.</p>
         <div class="check-grid">
           <label class="checkbox"><input type="checkbox" value="codex" checked /> Codex</label>
           <label class="checkbox"><input type="checkbox" value="cursor" /> Cursor</label>
@@ -92,7 +92,7 @@
         <pre id="review-summary" class="summary"></pre>
 
         <div class="action-row">
-          <button id="apply-setup" class="btn primary">Build + Up Brainer</button>
+          <button id="apply-setup" class="btn primary">Build + Up brainer</button>
           <button id="run-mcp-installs" class="btn">Install Selected MCP Integrations</button>
         </div>
 
@@ -116,7 +116,7 @@
           <div class="progress-track build-track">
             <div id="build-progress-fill" class="progress-fill"></div>
           </div>
-          <p id="build-progress-message" class="hint">No setup run yet.</p>
+          <p id="build-progress-message" class="hint">No operator setup run yet.</p>
         </div>
 
         <p class="hint">Este paso ejecuta <code>docker compose build backend</code> y <code>docker compose up -d</code>.</p>
