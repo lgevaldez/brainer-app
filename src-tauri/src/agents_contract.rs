@@ -47,6 +47,8 @@ MCP and API are the nervous system used to exchange context with the brain.
 - Agents should treat every MCP/API interaction as a cognitive exchange with Brainer, not a stateless utility call.
 - Send high-signal memory only: decisions, blockers, risks, TODOs, discovered relationships, and verification targets.
 - Scope memory as narrowly as possible and recover memory before broad local exploration.
+- Keep a stable `session_id` across related MCP/API calls so Brainer can learn from repeated interaction patterns.
+- Treat docs, manifests, config files, and AGENTS contracts as structural signals too; when they imply real file relationships, query or report them to Brainer with concrete paths.
 - Favor reusable context that will still matter after compaction or handoff.
 
 ## Detected Workspaces
@@ -60,7 +62,7 @@ MCP and API are the nervous system used to exchange context with the brain.
 5. `get_agent_playbook`
 6. `recall_memory_bundle`
 7. `search_workspace_context`
-8. `get_graph_dependencies` when structural impact matters
+8. `get_graph_dependencies` when structural impact matters, including docs/manifests/config references
 9. `remember_short_term_memory` for decisions, blockers, TODOs, and high-value relationships
 10. `checkpoint_memory` at milestones, before compact, or before handoff
 11. `promote_short_term_memory` for high-signal long-term knowledge
@@ -95,5 +97,7 @@ mod tests {
         assert!(content.contains("primary_workspace_name: `brainer`"));
         assert!(content.contains("Mental Process Contract"));
         assert!(content.contains("high-value relationships"));
+        assert!(content.contains("stable `session_id`"));
+        assert!(content.contains("docs, manifests, config files, and AGENTS contracts"));
     }
 }
