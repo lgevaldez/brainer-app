@@ -16,6 +16,7 @@ MCP and HTTP API are the nervous system and senses used to exchange context with
 - Send only high-signal memory: decisions, blockers, risks, TODOs, discovered relationships, and assumptions that must be verified later.
 - Include `workspace_name`, `project_name`, and `session_id` whenever the task has that scope.
 - Keep a stable `session_id` across related MCP/API calls so Brainer can learn from repeated interaction patterns.
+- Ask focused queries on the same thread of work; repeated semantic search, graph lookup, and recall activity can become useful background memory.
 - Treat docs, manifests, config files, and AGENTS contracts as structural signals too; when they imply real file relationships, query or report them to Brainer with concrete paths.
 - Keep memory entries factual, compact, and reusable across future sessions.
 - Treat memory writes as inputs for later background consolidation and long-term promotion.
