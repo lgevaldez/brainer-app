@@ -121,6 +121,15 @@
 
         <p class="hint">Este paso ejecuta <code>docker compose build backend</code> y <code>docker compose up -d</code>.</p>
 
+        <div class="build-progress" aria-live="polite">
+          <div class="build-progress-head">
+            <strong>Cognitive Telemetry</strong>
+            <button id="refresh-cognitive-status" class="btn">Refresh</button>
+          </div>
+          <p class="hint">Muestra lo que el cerebro ha estado haciendo por MCP, API y background processes.</p>
+          <pre id="cognitive-summary" class="summary"></pre>
+        </div>
+
         <hr class="divider" />
 
         <h3>AGENTS.md Bootstrap</h3>
