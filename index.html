@@ -43,10 +43,6 @@
         </div>
         <p class="hint">Subcarpetas detectadas (workspaces disponibles):</p>
         <div id="workspace-list" class="list-box"></div>
-        <label class="hint" for="default-workspace">Workspace por defecto (opcional)</label>
-        <select id="default-workspace">
-          <option value="">-- ninguno --</option>
-        </select>
       </section>
 
       <section id="step-3" class="step-card hidden">
@@ -91,14 +87,78 @@
         <p class="hint">La instalación MCP se ejecuta después de levantar el stack.</p>
       </section>
 
-      <section id="step-6" class="step-card hidden">
+      <section id="step-6" class="step-card hidden launch-step">
         <h2>6) Review & Launch</h2>
         <pre id="review-summary" class="summary"></pre>
-        <div class="row">
+
+        <div class="action-row">
           <button id="apply-setup" class="btn primary">Build + Up Brainer</button>
           <button id="run-mcp-installs" class="btn">Install Selected MCP Integrations</button>
         </div>
+
+        <div id="mcp-install-panel" class="build-progress hidden" aria-live="polite">
+          <div class="build-progress-head">
+            <strong id="mcp-progress-label">Ready</strong>
+            <span id="mcp-progress-percent">0%</span>
+          </div>
+          <div class="progress-track build-track">
+            <div id="mcp-progress-fill" class="progress-fill"></div>
+          </div>
+          <p id="mcp-progress-message" class="hint">No MCP installation run yet.</p>
+          <div id="mcp-progress-results" class="hint mcp-results"></div>
+        </div>
+
+        <div id="build-progress-panel" class="build-progress hidden" aria-live="polite">
+          <div class="build-progress-head">
+            <strong id="build-progress-label">Ready</strong>
+            <span id="build-progress-percent">0%</span>
+          </div>
+          <div class="progress-track build-track">
+            <div id="build-progress-fill" class="progress-fill"></div>
+          </div>
+          <p id="build-progress-message" class="hint">No setup run yet.</p>
+        </div>
+
         <p class="hint">Este paso ejecuta <code>docker compose build backend</code> y <code>docker compose up -d</code>.</p>
+
+        <hr class="divider" />
+
+        <h3>AGENTS.md Bootstrap</h3>
+        <p class="hint">Sugerencia automática por workspace y generación de AGENTS root + mirrors por repo.</p>
+
+        <div class="stack agents-preindex">
+          <label class="hint" for="agents-index-mode">Pre-index strategy before AGENTS generation</label>
+          <select id="agents-index-mode">
+            <option value="incremental" selected>Validation + incremental re-index (Recommended)</option>
+            <option value="none">Skip re-index and generate directly</option>
+            <option value="force">Force re-index (wipes existing indexed context)</option>
+          </select>
+          <p id="agents-index-note" class="hint">Incremental mode validates changes and re-indexes only what changed when possible.</p>
+        </div>
+
+        <div id="agents-index-panel" class="build-progress hidden" aria-live="polite">
+          <div class="build-progress-head">
+            <strong id="agents-index-label">Ready</strong>
+            <span id="agents-index-percent">0%</span>
+          </div>
+          <div class="progress-track build-track">
+            <div id="agents-index-fill" class="progress-fill"></div>
+          </div>
+          <p id="agents-index-message" class="hint">No index run yet.</p>
+        </div>
+
+        <div class="action-row">
+          <button id="refresh-agents-suggestion" class="btn">Refresh Suggestion</button>
+          <button id="generate-agents-templates" class="btn primary">Generate AGENTS.md Templates</button>
+        </div>
+
+        <div class="check-grid compact-grid">
+          <label class="checkbox"><input id="agents-include-project-mirrors" type="checkbox" checked /> Generate project mirrors</label>
+          <label class="checkbox"><input id="agents-overwrite" type="checkbox" /> Overwrite existing files</label>
+        </div>
+
+        <div id="agents-suggestion" class="hint">Select workspace root first (Step 2).</div>
+        <pre id="agents-output" class="summary"></pre>
       </section>
 
       <footer class="wizard-nav">
