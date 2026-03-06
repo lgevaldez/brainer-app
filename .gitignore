@@ -1,11 +1,18 @@
 # Node
 node_modules/
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
 
 # Frontend build
 dist/
 
 # Tauri / Rust
 src-tauri/target/
+
+# Local environment
+.env
+.env.*
 
 # macOS
 .DS_Store
